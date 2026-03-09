@@ -98,7 +98,13 @@ const Dashboard = {
                                 <div class="gauge-value">${defectTypeDistribution.displayValue}</div>
                                 <div class="gauge-date">${defectTypeDistribution.topType}</div>
                             </div>
-                            <div class="gauge-description">${defectTypeDistribution.description}</div>
+                            <div class="gauge-description" style="line-height: 1.8;">
+                                ${defectTypeDistribution.distribution.map((type, index) => `
+                                    <div style="margin-bottom: 6px;">
+                                        ${index === 0 ? '1️⃣' : index === 1 ? '2️⃣' : '3️⃣'} ${type.type} <strong style="color: ${index === 0 ? '#ef4444' : index === 1 ? '#f59e0b' : '#22c55e'};">(${type.percentage}%)</strong>
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
 

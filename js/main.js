@@ -1,8 +1,22 @@
+// Firebase Setup Banner
+function showFirebaseSetupBanner() {
+    // Firebase가 설정되지 않았을 때만 배너 표시
+    if (!useFirebase) {
+        const banner = document.getElementById('firebaseSetupBanner');
+        if (banner) {
+            banner.style.display = 'block';
+        }
+    }
+}
+
 // Main Application
 const App = {
     currentPage: 'dashboard',
 
     init() {
+        // Firebase 설정 배너 표시
+        showFirebaseSetupBanner();
+        
         this.setupNavigation();
         this.setupModal();
         this.handleRoute();

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase 설정 도우미</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px;
+        }
+        .step {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .step h2 {
+            display: inline-block;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .step-content {
+            margin-top: 20px;
+            line-height: 1.8;
+        }
+        .code-box {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .code-box pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .warning strong {
+            color: #856404;
+        }
+        .success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success strong {
+            color: #155724;
+        }
+        .input-group {
+            margin: 20px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+        .input-group textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 Firebase 설정 도우미</h1>
+            <p>다른 컴퓨터에서도 데이터를 실시간으로 공유하세요!</p>
+        </div>
+
+        <div class="content">
+            <div class="warning">
+                <strong>⚠️ 중요!</strong><br>
+                현재 LocalStorage를 사용하고 있어 각 컴퓨터의 브라우저에만 데이터가 저장됩니다.<br>
+                Firebase를 설정하면 모든 컴퓨터에서 데이터를 실시간으로 공유할 수 있습니다!
+            </div>
+
+            <div class="step">
+                <span class="step-number">1</span>
+                <h2>Firebase Console 접속</h2>
+                <div class="step-content">
+                    <p>Firebase Console에 접속하여 Google 계정으로 로그인하세요.</p>
+                    <a href="https://console.firebase.google.com" target="_blank" class="btn">
+                        🚀 Firebase Console 열기
+                    </a>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <h2>프로젝트 생성</h2>
+                <div class="step-content">
+                    <ol style="line-height: 2;">
+                        <li><strong>"프로젝트 추가"</strong> 버튼 클릭</li>
+                        <li>프로젝트 이름 입력: <code>defect-management</code></li>
+                        <li>Google 애널리틱스: <strong>사용 안 함</strong> 선택</li>
+                        <li><strong>"프로젝트 만들기"</strong> 클릭</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <h2>Firestore 데이터베이스 생성</h2>
+                <div class="step-content">
+                    <ol style="line-height: 2;">
+                        <li>왼쪽 메뉴 → <strong>"Firestore Database"</strong> 클릭</li>
+                        <li><strong>"데이터베이스 만들기"</strong> 클릭</li>
+                        <li>보안 규칙: <strong>"테스트 모드에서 시작"</strong> 선택 ⭐</li>
+                        <li>위치: <strong>"asia-northeast3 (Seoul)"</strong> 선택</li>
+                        <li><strong>"사용 설정"</strong> 클릭</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">4</span>
+                <h2>웹 앱 추가</h2>
+                <div class="step-content">
+                    <ol style="line-height: 2;">
+                        <li>프로젝트 개요 → <strong>웹 아이콘 (</>)</strong> 클릭</li>
+                        <li>앱 닉네임: <code>defect-app</code></li>
+                        <li>Firebase Hosting: <strong>체크 안 함</strong></li>
+                        <li><strong>"앱 등록"</strong> 클릭</li>
+                        <li>표시되는 <strong>Firebase 설정 코드 전체 복사</strong></li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">5</span>
+                <h2>설정 코드 붙여넣기</h2>
+                <div class="step-content">
+                    <p>Firebase Console에서 복사한 설정 코드를 아래에 붙여넣으세요:</p>
+                    
+                    <div class="input-group">
+                        <label>Firebase 설정 코드 (firebaseConfig 부분만):</label>
+                        <textarea id="firebaseConfig" placeholder='const firebaseConfig = {
+  apiKey: "AIza...",
+  authDomain: "...",
+  projectId: "...",
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "..."
+};'></textarea>
+                    </div>
+
+                    <button class="btn" onclick="generateCode()">
+                        📋 코드 생성
+                    </button>
+                </div>
+            </div>
+
+            <div id="output" style="display: none;">
+                <div class="success">
+                    <strong>✅ 성공!</strong><br>
+                    아래 코드를 <code>js/firebase-config.js</code> 파일의 5~12번 줄에 붙여넣으세요.
+                </div>
+
+                <div class="code-box">
+                    <pre id="outputCode"></pre>
+                </div>
+
+                <button class="btn" onclick="copyCode()">
+                    📋 코드 복사
+                </button>
+            </div>
+
+            <div class="step">
+                <span class="step-number">6</span>
+                <h2>배포 및 확인</h2>
+                <div class="step-content">
+                    <ol style="line-height: 2;">
+                        <li>파일 저장 후 Git에 커밋</li>
+                        <li>배포된 사이트 새로고침</li>
+                        <li>F12 콘솔에서 확인: <code>✅ Firebase 연결 완료!</code></li>
+                        <li>다른 컴퓨터에서 접속하여 데이터 공유 확인</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="success">
+                <strong>🎉 완료!</strong><br>
+                이제 모든 컴퓨터에서 데이터가 실시간으로 공유됩니다!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateCode() {
+            const input = document.getElementById('firebaseConfig').value;
+            
+            if (!input.trim()) {
+                alert('Firebase 설정 코드를 입력하세요!');
+                return;
+            }
+
+            // Extract config values
+            try {
+                const config = input.match(/\{[\s\S]*\}/);
+                if (!config) {
+                    throw new Error('유효하지 않은 형식입니다.');
+                }
+
+                const output = `const firebaseConfig = ${config[0]};`;
+                
+                document.getElementById('outputCode').textContent = output;
+                document.getElementById('output').style.display = 'block';
+                document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                alert('오류: ' + error.message + '\n\nFirebase Console에서 전체 코드를 복사했는지 확인하세요.');
+            }
+        }
+
+        function copyCode() {
+            const code = document.getElementById('outputCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✅ 코드가 클립보드에 복사되었습니다!\n\njs/firebase-config.js 파일의 5~12번 줄에 붙여넣으세요.');
+            }).catch(err => {
+                alert('복사 실패: ' + err);
+            });
+        }
+    </script>
+</body>
+</html>

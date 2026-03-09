@@ -1,5 +1,5 @@
 // Sample Data Initialization
-function initializeSampleData() {
+async function initializeSampleData() {
     // 샘플 데이터 초기화 여부 확인 (한 번만 초기화)
     const isInitialized = localStorage.getItem('data_initialized');
     
@@ -153,9 +153,41 @@ function initializeSampleData() {
             }
         ];
         
+        // LocalStorage에 저장
         localStorage.setItem('imports', JSON.stringify(sampleImports));
         localStorage.setItem('defects', JSON.stringify(sampleDefects));
         localStorage.setItem('data_initialized', 'true'); // 초기화 완료 표시
+        
+        // Firebase를 사용 중이면 Firebase에도 데이터 업로드
+        if (window.useFirebase) {
+            console.log('🔥 Firebase에 샘플 데이터 업로드 중...');
+            try {
+                // 기존 데이터 확인
+                const existingDefects = await API.getDefects({ limit: 10 });
+                const existingImports = await API.getImports(1, 10);
+                
+                // 데이터가 없으면 샘플 데이터 업로드
+                if (existingDefects.data.length === 0 && existingImports.data.length === 0) {
+                    // 수입 물량 데이터 업로드
+                    for (const imp of sampleImports) {
+                        const { id, ...data } = imp; // id 제거 (Firebase가 자동 생성)
+                        await API.createImport(data);
+                    }
+                    
+                    // 불량 데이터 업로드
+                    for (const defect of sampleDefects) {
+                        const { id, ...data } = defect; // id 제거 (Firebase가 자동 생성)
+                        await API.createDefect(data);
+                    }
+                    
+                    console.log('✅ Firebase 샘플 데이터 업로드 완료!');
+                } else {
+                    console.log('ℹ️ Firebase에 이미 데이터가 있음 - 샘플 데이터 업로드 건너뜀');
+                }
+            } catch (error) {
+                console.error('❌ Firebase 샘플 데이터 업로드 실패:', error);
+            }
+        }
         
         console.log('✅ 샘플 데이터 초기화 완료!');
         console.log(`   - 수입 물량: ${sampleImports.length}개`);

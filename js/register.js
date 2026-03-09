@@ -665,9 +665,16 @@ const DefectRegister = {
                 console.log('✅ 모델명 자동 입력:', importData.model_name);
             }
 
-            // 3. 현재 LOT의 불량 데이터 조회
-            const defectsResponse = await API.getDefects(1, 1000);
-            const lotDefects = defectsResponse.data.filter(d => d.lot_number === lotNumber);
+            // 3. 현재 LOT의 불량 데이터 조회 (캐싱된 데이터 사용)
+            // 전역 캐시 확인 (페이지 로드 시 한 번만 로드)
+            if (!window._defectsCache || Date.now() - window._defectsCacheTime > 30000) {
+                // 캐시가 없거나 30초 이상 경과한 경우 새로 로드
+                const defectsResponse = await API.getDefects({ limit: 1000 });
+                window._defectsCache = defectsResponse.data || [];
+                window._defectsCacheTime = Date.now();
+            }
+            
+            const lotDefects = window._defectsCache.filter(d => d.lot_number === lotNumber);
             const totalDefectQty = lotDefects.reduce((sum, d) => sum + (d.defect_quantity || 0), 0);
             
             // 4. 불량률 계산

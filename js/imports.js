@@ -123,32 +123,26 @@ const ImportManagement = {
             const response = await API.getImports(this.currentPage, this.pageSize);
             this.totalPages = Math.ceil(response.total / this.pageSize);
             
-            // 각 수입 물량에 대한 불량 데이터 조회
-            const importsWithDefects = await Promise.all(response.data.map(async (imp) => {
-                try {
-                    // 해당 LOT의 불량 데이터 조회
-                    const defectsResponse = await API.getDefects(1, 1000);
-                    const lotDefects = defectsResponse.data.filter(d => d.lot_number === imp.lot_number);
-                    
-                    const totalDefectQuantity = lotDefects.reduce((sum, d) => sum + (d.defect_quantity || 0), 0);
-                    const defectRate = imp.import_quantity > 0 
-                        ? ((totalDefectQuantity / imp.import_quantity) * 100).toFixed(1)
-                        : '0.0';
-                    
-                    return {
-                        ...imp,
-                        totalDefectQuantity,
-                        defectRate
-                    };
-                } catch (error) {
-                    console.error('불량 데이터 조회 실패:', error);
-                    return {
-                        ...imp,
-                        totalDefectQuantity: 0,
-                        defectRate: '0.0'
-                    };
-                }
-            }));
+            // 모든 불량 데이터를 한 번만 조회
+            const defectsResponse = await API.getDefects({ limit: 1000 });
+            const allDefects = defectsResponse.data || [];
+            
+            // 각 수입 물량에 대한 불량 데이터 계산
+            const importsWithDefects = response.data.map(imp => {
+                // 해당 LOT의 불량 데이터 필터링
+                const lotDefects = allDefects.filter(d => d.lot_number === imp.lot_number);
+                
+                const totalDefectQuantity = lotDefects.reduce((sum, d) => sum + (d.defect_quantity || 0), 0);
+                const defectRate = imp.import_quantity > 0 
+                    ? ((totalDefectQuantity / imp.import_quantity) * 100).toFixed(1)
+                    : '0.0';
+                
+                return {
+                    ...imp,
+                    totalDefectQuantity,
+                    defectRate
+                };
+            });
             
             return importsWithDefects;
         } catch (error) {
@@ -518,30 +512,25 @@ const ImportManagement = {
             const response = await API.getImports(1, 1000);
             const imports = response.data;
 
-            // 각 수입 물량에 대한 불량 데이터 조회
-            const importsWithDefects = await Promise.all(imports.map(async (imp) => {
-                try {
-                    const defectsResponse = await API.getDefects(1, 1000);
-                    const lotDefects = defectsResponse.data.filter(d => d.lot_number === imp.lot_number);
-                    
-                    const totalDefectQuantity = lotDefects.reduce((sum, d) => sum + (d.defect_quantity || 0), 0);
-                    const defectRate = imp.import_quantity > 0 
-                        ? ((totalDefectQuantity / imp.import_quantity) * 100).toFixed(1)
-                        : '0.0';
-                    
-                    return {
-                        ...imp,
-                        totalDefectQuantity,
-                        defectRate
-                    };
-                } catch (error) {
-                    return {
-                        ...imp,
-                        totalDefectQuantity: 0,
-                        defectRate: '0.0'
-                    };
-                }
-            }));
+            // 모든 불량 데이터를 한 번만 조회
+            const defectsResponse = await API.getDefects({ limit: 1000 });
+            const allDefects = defectsResponse.data || [];
+
+            // 각 수입 물량에 대한 불량 데이터 계산
+            const importsWithDefects = imports.map(imp => {
+                const lotDefects = allDefects.filter(d => d.lot_number === imp.lot_number);
+                
+                const totalDefectQuantity = lotDefects.reduce((sum, d) => sum + (d.defect_quantity || 0), 0);
+                const defectRate = imp.import_quantity > 0 
+                    ? ((totalDefectQuantity / imp.import_quantity) * 100).toFixed(1)
+                    : '0.0';
+                
+                return {
+                    ...imp,
+                    totalDefectQuantity,
+                    defectRate
+                };
+            });
 
             const data = importsWithDefects.map(imp => ({
                 '수입일자': imp.import_date || '-',

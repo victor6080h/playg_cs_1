@@ -3,12 +3,17 @@ const Dashboard = {
     chart: null,
     selectedProduct: 'all', // 선택된 제품 (all = 전체)
     allDefects: [], // 전체 불량 데이터
+    allImports: [], // 전체 수입 물량 데이터 (캐싱)
     productNames: [], // 제품명 목록
 
     async render() {
         try {
             const result = await API.getDefects({ limit: 1000 });
             this.allDefects = result.data || [];
+            
+            // 수입 물량 데이터 한 번만 로드 (캐싱)
+            const importsResponse = await API.getImports(1, 1000);
+            this.allImports = importsResponse.data || [];
             
             // 고유 제품명 추출
             this.productNames = [...new Set(this.allDefects.map(d => d.product_name).filter(Boolean))].sort();
@@ -17,7 +22,7 @@ const Dashboard = {
             const defects = this.getFilteredDefects();
             const stats = calculateStats(defects);
 
-            // 비동기 데이터 미리 계산
+            // 비동기 데이터 미리 계산 (캐싱된 imports 사용)
             const defectRate = await this.calculateDefectRate(defects);
             const productTop3 = await this.calculateProductTop3(defects);
             const defectTypeDistribution = this.calculateDefectTypeDistribution(defects);
@@ -249,9 +254,8 @@ const Dashboard = {
         if (defects.length === 0) return 0;
         
         try {
-            // 1. 수입 물량 테이블에서 전체 데이터 조회
-            const importsResponse = await API.getImports(1, 1000);
-            const imports = importsResponse.data;
+            // 캐싱된 수입 물량 데이터 사용
+            let imports = this.allImports;
 
             // 2. 선택된 제품에 따른 필터링
             let filteredImports = imports;
@@ -303,9 +307,8 @@ const Dashboard = {
         }
 
         try {
-            // 수입 물량 테이블 조회
-            const importsResponse = await API.getImports(1, 1000);
-            let imports = importsResponse.data;
+            // 캐싱된 수입 물량 데이터 사용
+            let imports = this.allImports;
 
             // 선택된 제품에 따른 필터링
             if (this.selectedProduct !== 'all') {
@@ -426,9 +429,8 @@ const Dashboard = {
         }
 
         try {
-            // 수입 물량 테이블 조회
-            const importsResponse = await API.getImports(1, 1000);
-            let imports = importsResponse.data;
+            // 캐싱된 수입 물량 데이터 사용
+            let imports = this.allImports;
 
             // 선택된 제품 필터링 (all이 아닌 경우)
             if (this.selectedProduct !== 'all') {
@@ -666,9 +668,8 @@ const Dashboard = {
         if (!ctx) return;
 
         try {
-            // 수입 물량 테이블 조회
-            const importsResponse = await API.getImports(1, 1000);
-            let imports = importsResponse.data;
+            // 캐싱된 수입 물량 데이터 사용
+            let imports = this.allImports;
 
             // 선택된 제품 필터링
             if (this.selectedProduct !== 'all') {
@@ -1092,9 +1093,8 @@ const Dashboard = {
         }
         
         try {
-            // 수입 물량 테이블에서 데이터 조회
-            const importsResponse = await API.getImports(1, 1000);
-            let imports = importsResponse.data;
+            // 캐싱된 수입 물량 데이터 사용
+            let imports = this.allImports;
 
             // 선택된 제품에 따른 필터링
             if (this.selectedProduct !== 'all') {

@@ -82,7 +82,13 @@ const Dashboard = {
                                 <div class="gauge-value">${productTop3.displayValue}</div>
                                 <div class="gauge-date">${productTop3.topProduct}</div>
                             </div>
-                            <div class="gauge-description">${productTop3.description}</div>
+                            <div class="gauge-description" style="line-height: 1.8;">
+                                ${productTop3.top3.map((product, index) => `
+                                    <div style="margin-bottom: 6px;">
+                                        ${index === 0 ? '1️⃣' : index === 1 ? '2️⃣' : '3️⃣'} ${product.product_name} <strong style="color: ${index === 0 ? '#ef4444' : index === 1 ? '#f59e0b' : '#22c55e'};">(${product.defect_rate}%)</strong>
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
 
                         <div class="gauge-card">

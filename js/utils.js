@@ -208,7 +208,7 @@ async function generatePDFReport(defects, reportInfo) {
                     상세 목록
                 </h2>
                 ${defects.map((defect, index) => `
-                    <div style="margin-bottom: 15px; padding: 15px; background: #f8fafc; border-radius: 8px; border-left: 3px solid #ef4444;">
+                    <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border-left: 3px solid #ef4444; page-break-inside: avoid;">
                         <div style="margin-bottom: 8px;">
                             <span style="display: inline-block; background: #2563eb; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-right: 8px;">
                                 ${index + 1}
@@ -223,6 +223,32 @@ async function generatePDFReport(defects, reportInfo) {
                         ${defect.defect_detail ? `
                             <div style="color: #64748b; font-size: 14px; line-height: 1.5; margin-top: 8px;">
                                 ${defect.defect_detail}
+                            </div>
+                        ` : ''}
+                        ${defect.photos && defect.photos.length > 0 ? `
+                            <div style="margin-top: 12px;">
+                                <div style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">
+                                    📷 첨부 사진 (${defect.photos.length}장)
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px;">
+                                    ${defect.photos.map(photo => `
+                                        <div style="border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; background: white;">
+                                            <img src="${photo}" 
+                                                 style="width: 100%; height: 120px; object-fit: cover; display: block;" 
+                                                 crossorigin="anonymous" />
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${defect.videos && defect.videos.length > 0 ? `
+                            <div style="margin-top: 12px;">
+                                <div style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 4px;">
+                                    🎥 첨부 동영상: ${defect.videos.length}개
+                                </div>
+                                <div style="font-size: 12px; color: #64748b; font-style: italic;">
+                                    * 동영상은 PDF에 포함되지 않습니다. 원본 데이터를 확인해주세요.
+                                </div>
                             </div>
                         ` : ''}
                     </div>
@@ -245,8 +271,11 @@ async function generatePDFReport(defects, reportInfo) {
         const canvas = await html2canvas(reportContainer, {
             scale: 2,
             useCORS: true,
+            allowTaint: true,
             backgroundColor: '#ffffff',
-            logging: false
+            logging: false,
+            imageTimeout: 15000,
+            removeContainer: false
         });
         
         // Create PDF

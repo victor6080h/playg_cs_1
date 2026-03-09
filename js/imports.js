@@ -75,19 +75,19 @@ const ImportManagement = {
 
                     <!-- 수입 물량 목록 테이블 -->
                     <div class="table-container" style="overflow-x: auto;">
-                        <table class="defect-table" style="min-width: 1200px;">
+                        <table class="defect-table" style="min-width: 1600px; table-layout: fixed;">
                             <thead>
                                 <tr>
-                                    <th style="min-width: 100px;">수입일자</th>
-                                    <th style="min-width: 150px;">제품명</th>
-                                    <th style="min-width: 100px;">시즌/버전</th>
-                                    <th style="min-width: 100px;">모델명</th>
-                                    <th style="min-width: 130px;">LOT 번호</th>
-                                    <th style="min-width: 100px; text-align: right;">수입 수량</th>
-                                    <th style="min-width: 100px; text-align: right;">불량 수량</th>
-                                    <th style="min-width: 100px; text-align: center;">불량률(%)</th>
-                                    <th style="min-width: 80px;">등록자</th>
-                                    <th style="min-width: 100px; text-align: center;">관리</th>
+                                    <th style="width: 110px;">수입일자</th>
+                                    <th style="width: 400px;">제품명</th>
+                                    <th style="width: 110px;">시즌/버전</th>
+                                    <th style="width: 130px;">모델명</th>
+                                    <th style="width: 150px;">LOT 번호</th>
+                                    <th style="width: 120px; text-align: right;">수입 수량</th>
+                                    <th style="width: 120px; text-align: right;">불량 수량</th>
+                                    <th style="width: 120px; text-align: center;">불량률(%)</th>
+                                    <th style="width: 100px;">등록자</th>
+                                    <th style="width: 160px; text-align: center;">관리</th>
                                 </tr>
                             </thead>
                             <tbody id="importsTableBody">
@@ -174,7 +174,7 @@ const ImportManagement = {
             return `
                 <tr data-import-id="${imp.id}">
                     <td style="white-space: nowrap;">${imp.import_date || '-'}</td>
-                    <td style="white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis;" title="${imp.product_name || '-'}">${imp.product_name || '-'}</td>
+                    <td style="word-break: break-word; white-space: normal;" title="${imp.product_name || '-'}">${imp.product_name || '-'}</td>
                     <td style="white-space: nowrap;">${imp.season || '-'}</td>
                     <td style="white-space: nowrap;">${imp.model_name || '-'}</td>
                     <td style="white-space: nowrap;"><strong>${imp.lot_number || '-'}</strong></td>

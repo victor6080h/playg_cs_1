@@ -38,6 +38,11 @@
                 <li><a href="#list" class="nav-link" data-page="list"><i class="fas fa-list"></i> 불량 목록</a></li>
                 <li><a href="#summary" class="nav-link" data-page="summary"><i class="fas fa-table"></i> LOT/수입일자 요약</a></li>
                 <li><a href="#report" class="nav-link" data-page="report"><i class="fas fa-file-pdf"></i> 보고서 출력</a></li>
+                <li>
+                    <a href="javascript:void(0)" onclick="AutoBackup.downloadBackup()" class="nav-link" style="color: #f59e0b;">
+                        <i class="fas fa-download"></i> 백업 다운로드
+                    </a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -58,6 +63,7 @@
     <!-- Scripts -->
     <!-- ⚠️ 중요: firebase-config.js를 먼저 로드해야 합니다! -->
     <script src="js/firebase-config.js"></script>
+    <script src="js/auto-backup.js"></script>
     <script src="js/sample-data.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/dashboard.js"></script>

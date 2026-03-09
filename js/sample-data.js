@@ -1,10 +1,9 @@
 // Sample Data Initialization
 function initializeSampleData() {
-    // LocalStorage에 데이터가 없으면 샘플 데이터 추가
-    const existingDefects = localStorage.getItem('defects');
-    const existingImports = localStorage.getItem('imports');
+    // 샘플 데이터 초기화 여부 확인 (한 번만 초기화)
+    const isInitialized = localStorage.getItem('data_initialized');
     
-    if (!existingDefects || JSON.parse(existingDefects).length === 0) {
+    if (!isInitialized) {
         console.log('📦 샘플 데이터 초기화 중...');
         
         // 샘플 수입 물량 데이터
@@ -156,10 +155,13 @@ function initializeSampleData() {
         
         localStorage.setItem('imports', JSON.stringify(sampleImports));
         localStorage.setItem('defects', JSON.stringify(sampleDefects));
+        localStorage.setItem('data_initialized', 'true'); // 초기화 완료 표시
         
         console.log('✅ 샘플 데이터 초기화 완료!');
         console.log(`   - 수입 물량: ${sampleImports.length}개`);
         console.log(`   - 불량 데이터: ${sampleDefects.length}개`);
+    } else {
+        console.log('ℹ️ 샘플 데이터 이미 초기화됨 - 기존 데이터 유지');
     }
 }
 

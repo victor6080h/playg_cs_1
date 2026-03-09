@@ -1,10 +1,36 @@
 // Sample Data Initialization
 async function initializeSampleData() {
-    // 샘플 데이터 초기화 여부 확인 (한 번만 초기화)
-    const isInitialized = localStorage.getItem('data_initialized');
+    // Firebase 사용 여부 확인
+    const usingFirebase = window.useFirebase || false;
     
-    if (!isInitialized) {
-        console.log('📦 샘플 데이터 초기화 중...');
+    // 샘플 데이터 초기화 여부 확인
+    let shouldInitialize = false;
+    
+    if (usingFirebase) {
+        // Firebase 사용 시: Firebase 데이터 확인
+        try {
+            const existingDefects = await API.getDefects({ limit: 1 });
+            const existingImports = await API.getImports(1, 1);
+            
+            // Firebase에 데이터가 없으면 초기화 필요
+            if (existingDefects.data.length === 0 && existingImports.data.length === 0) {
+                shouldInitialize = true;
+                console.log('📦 Firebase에 데이터가 없음 - 샘플 데이터 초기화 필요');
+            } else {
+                console.log('ℹ️ Firebase에 이미 데이터가 있음 - 샘플 데이터 초기화 건너뜀');
+            }
+        } catch (error) {
+            console.error('❌ Firebase 데이터 확인 실패:', error);
+            shouldInitialize = false;
+        }
+    } else {
+        // LocalStorage 사용 시: 기존 로직 유지
+        const isInitialized = localStorage.getItem('data_initialized');
+        shouldInitialize = !isInitialized;
+    }
+    
+    if (shouldInitialize) {
+        console.log('📦 샘플 데이터 초기화 시작...');
         
         // 샘플 수입 물량 데이터
         const sampleImports = [
@@ -153,37 +179,32 @@ async function initializeSampleData() {
             }
         ];
         
-        // LocalStorage에 저장
-        localStorage.setItem('imports', JSON.stringify(sampleImports));
-        localStorage.setItem('defects', JSON.stringify(sampleDefects));
-        localStorage.setItem('data_initialized', 'true'); // 초기화 완료 표시
+        // LocalStorage에 저장 (LocalStorage 모드일 때만)
+        if (!usingFirebase) {
+            localStorage.setItem('imports', JSON.stringify(sampleImports));
+            localStorage.setItem('defects', JSON.stringify(sampleDefects));
+            localStorage.setItem('data_initialized', 'true');
+        }
         
-        // Firebase를 사용 중이면 Firebase에도 데이터 업로드
-        if (window.useFirebase) {
+        // Firebase 사용 시 Firebase에 데이터 업로드
+        if (usingFirebase) {
             console.log('🔥 Firebase에 샘플 데이터 업로드 중...');
             try {
-                // 기존 데이터 확인
-                const existingDefects = await API.getDefects({ limit: 10 });
-                const existingImports = await API.getImports(1, 10);
-                
-                // 데이터가 없으면 샘플 데이터 업로드
-                if (existingDefects.data.length === 0 && existingImports.data.length === 0) {
-                    // 수입 물량 데이터 업로드
-                    for (const imp of sampleImports) {
-                        const { id, ...data } = imp; // id 제거 (Firebase가 자동 생성)
-                        await API.createImport(data);
-                    }
-                    
-                    // 불량 데이터 업로드
-                    for (const defect of sampleDefects) {
-                        const { id, ...data } = defect; // id 제거 (Firebase가 자동 생성)
-                        await API.createDefect(data);
-                    }
-                    
-                    console.log('✅ Firebase 샘플 데이터 업로드 완료!');
-                } else {
-                    console.log('ℹ️ Firebase에 이미 데이터가 있음 - 샘플 데이터 업로드 건너뜀');
+                // 수입 물량 데이터 업로드
+                for (const imp of sampleImports) {
+                    const { id, ...data } = imp; // id 제거 (Firebase가 자동 생성)
+                    await API.createImport(data);
+                    console.log(`  ✅ 수입 물량: ${data.product_name}`);
                 }
+                
+                // 불량 데이터 업로드
+                for (const defect of sampleDefects) {
+                    const { id, ...data } = defect; // id 제거 (Firebase가 자동 생성)
+                    await API.createDefect(data);
+                    console.log(`  ✅ 불량 데이터: ${data.product_name} - ${data.defect_type}`);
+                }
+                
+                console.log('🎉 Firebase 샘플 데이터 업로드 완료!');
             } catch (error) {
                 console.error('❌ Firebase 샘플 데이터 업로드 실패:', error);
             }
@@ -193,7 +214,9 @@ async function initializeSampleData() {
         console.log(`   - 수입 물량: ${sampleImports.length}개`);
         console.log(`   - 불량 데이터: ${sampleDefects.length}개`);
     } else {
-        console.log('ℹ️ 샘플 데이터 이미 초기화됨 - 기존 데이터 유지');
+        if (!usingFirebase) {
+            console.log('ℹ️ 샘플 데이터 이미 초기화됨 - 기존 데이터 유지');
+        }
     }
 }
 

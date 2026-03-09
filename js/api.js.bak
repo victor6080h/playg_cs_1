@@ -1,0 +1,178 @@
+// API Service for defects table
+const API = {
+    baseURL: 'tables/defects',
+
+    // Get all defects with optional filters
+    async getDefects(params = {}) {
+        try {
+            const queryParams = new URLSearchParams(params);
+            const url = `${this.baseURL}?${queryParams}`;
+            console.log('Fetching defects from:', url);
+            
+            const response = await fetch(url);
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('API Error:', response.status, errorText);
+                throw new Error('데이터를 불러오는데 실패했습니다.');
+            }
+            
+            const result = await response.json();
+            console.log('Fetched defects:', result.data?.length || 0, 'items');
+            return result;
+        } catch (error) {
+            console.error('getDefects error:', error);
+            throw error;
+        }
+    },
+
+    // Get single defect by ID
+    async getDefect(id) {
+        const response = await fetch(`${this.baseURL}/${id}`);
+        if (!response.ok) throw new Error('데이터를 불러오는데 실패했습니다.');
+        return await response.json();
+    },
+
+    // Create new defect
+    async createDefect(data) {
+        try {
+            console.log('Creating defect with data size:', JSON.stringify(data).length, 'bytes');
+            const response = await fetch(this.baseURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('API Error:', response.status, errorText);
+                throw new Error(`데이터 저장에 실패했습니다 (${response.status})`);
+            }
+            
+            const result = await response.json();
+            console.log('Created defect:', result);
+            return result;
+        } catch (error) {
+            console.error('createDefect error:', error);
+            throw error;
+        }
+    },
+
+    // Update defect
+    async updateDefect(id, data) {
+        const response = await fetch(`${this.baseURL}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error('데이터 수정에 실패했습니다.');
+        return await response.json();
+    },
+
+    // Partial update defect
+    async patchDefect(id, data) {
+        const response = await fetch(`${this.baseURL}/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error('데이터 수정에 실패했습니다.');
+        return await response.json();
+    },
+
+    // Delete defect
+    async deleteDefect(id) {
+        const response = await fetch(`${this.baseURL}/${id}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) throw new Error('데이터 삭제에 실패했습니다.');
+        return true;
+    },
+
+    // ==================== 수입 물량 관리 API ====================
+    
+    // Get all imports with pagination
+    async getImports(page = 1, limit = 100) {
+        try {
+            const url = `tables/imports?page=${page}&limit=${limit}`;
+            console.log('Fetching imports from:', url);
+            
+            const response = await fetch(url);
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('API Error:', response.status, errorText);
+                throw new Error('수입 물량 데이터를 불러오는데 실패했습니다.');
+            }
+            
+            const result = await response.json();
+            console.log('Fetched imports:', result.data?.length || 0, 'items');
+            return result;
+        } catch (error) {
+            console.error('getImports error:', error);
+            throw error;
+        }
+    },
+
+    // Get single import by ID
+    async getImport(id) {
+        const response = await fetch(`tables/imports/${id}`);
+        if (!response.ok) throw new Error('수입 물량 데이터를 불러오는데 실패했습니다.');
+        return await response.json();
+    },
+
+    // Get import by LOT number
+    async getImportByLot(lotNumber) {
+        try {
+            const response = await this.getImports(1, 1000);
+            const imports = response.data.filter(imp => imp.lot_number === lotNumber);
+            return imports.length > 0 ? imports[0] : null;
+        } catch (error) {
+            console.error('getImportByLot error:', error);
+            return null;
+        }
+    },
+
+    // Create new import
+    async createImport(data) {
+        try {
+            console.log('Creating import with data:', data);
+            const response = await fetch('tables/imports', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('API Error:', response.status, errorText);
+                throw new Error(`수입 물량 저장에 실패했습니다 (${response.status})`);
+            }
+            
+            const result = await response.json();
+            console.log('Created import:', result);
+            return result;
+        } catch (error) {
+            console.error('createImport error:', error);
+            throw error;
+        }
+    },
+
+    // Update import
+    async updateImport(id, data) {
+        const response = await fetch(`tables/imports/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error('수입 물량 수정에 실패했습니다.');
+        return await response.json();
+    },
+
+    // Delete import
+    async deleteImport(id) {
+        const response = await fetch(`tables/imports/${id}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) throw new Error('수입 물량 삭제에 실패했습니다.');
+        return true;
+    }
+};

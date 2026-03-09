@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>불량 제품 관리 시스템</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <!-- html2canvas for HTML to image conversion -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-camera"></i>
+                <span>불량 제품 관리 시스템</span>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#dashboard" class="nav-link active" data-page="dashboard"><i class="fas fa-chart-line"></i> 대시보드</a></li>
+                <li><a href="#imports" class="nav-link" data-page="imports"><i class="fas fa-box"></i> 수입 물량 관리</a></li>
+                <li><a href="#register" class="nav-link" data-page="register"><i class="fas fa-plus-circle"></i> 불량 등록</a></li>
+                <li><a href="#list" class="nav-link" data-page="list"><i class="fas fa-list"></i> 불량 목록</a></li>
+                <li><a href="#summary" class="nav-link" data-page="summary"><i class="fas fa-table"></i> LOT/수입일자 요약</a></li>
+                <li><a href="#report" class="nav-link" data-page="report"><i class="fas fa-file-pdf"></i> 보고서 출력</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Pages will be loaded here dynamically -->
+    </main>
+
+    <!-- Modal for Detail View -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- ⚠️ 중요: firebase-config.js를 먼저 로드해야 합니다! -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/sample-data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/imports.js"></script>
+    <script src="js/register.js"></script>
+    <script src="js/list.js"></script>
+    <script src="js/summary.js"></script>
+    <script src="js/report.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

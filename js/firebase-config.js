@@ -3,12 +3,13 @@
 
 // ⚠️ 중요: 아래 firebaseConfig를 Firebase Console에서 복사한 내용으로 교체하세요!
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",  // ← Firebase Console에서 복사
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCK0GPvjwmZp8FLgTunTesXizPpz_XbdEQ",
+  authDomain: "playg-cs-2026.firebaseapp.com",
+  projectId: "playg-cs-2026",
+  storageBucket: "playg-cs-2026.firebasestorage.app",
+  messagingSenderId: "820137572547",
+  appId: "1:820137572547:web:0220db224d95239efa8a76",
+  measurementId: "G-YR1FQPMJG"
 };
 
 // Firebase 사용 가능 여부 확인

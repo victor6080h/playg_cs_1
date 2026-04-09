@@ -30,6 +30,9 @@ try {
   useFirebase = false;
 }
 
+// 전역 변수로 노출 (sample-data.js에서 사용)
+window.useFirebase = useFirebase;
+
 // Firestore 데이터베이스 설정
 // 한국 시간대 설정
 const TIMEZONE_OFFSET = 9 * 60 * 60 * 1000; // UTC+9 (한국)
